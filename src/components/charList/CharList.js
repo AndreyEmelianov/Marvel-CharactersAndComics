@@ -12,7 +12,7 @@ class CharList extends Component {
 		loading: true,
 		error: false,
 		newItemLoading: false,
-		offset: 1552,
+		offset: 210,
 		charEnded: false,
 	};
 
@@ -60,8 +60,20 @@ class CharList extends Component {
 		});
 	};
 
+	itemsRefs = [];
+
+	setRef = (ref) => {
+		this.itemsRefs.push(ref);
+	};
+
+	focusOnItem = (id) => {
+		this.itemsRefs.forEach((item) => item.classList.remove('char__item_selected'));
+		this.itemsRefs[id].classList.add('char__item_selected');
+		this.itemsRefs[id].focus();
+	};
+
 	renderItems(arr) {
-		const items = arr.map((item) => {
+		const items = arr.map((item, index) => {
 			let imgStyle = { objectFit: 'cover' };
 
 			if (
@@ -74,8 +86,18 @@ class CharList extends Component {
 			return (
 				<li
 					key={item.id}
+					ref={this.setRef}
 					className="char__item"
-					onClick={() => this.props.onCharSelected(item.id)}
+					onClick={() => {
+						this.props.onCharSelected(item.id);
+						this.focusOnItem(index);
+					}}
+					onKeyPress={(e) => {
+						if (e.key === ' ' || e.key === 'Enter') {
+							this.props.onCharSelected(item.id);
+							this.focusOnItem(index);
+						}
+					}}
 				>
 					<img src={item.thumbnail} alt={item.name} style={imgStyle} />
 					<div className="char__name">{item.name}</div>
